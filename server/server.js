@@ -25,9 +25,47 @@ if (process.env.MONGO_URI) {
       
       // Run seed on first connection if needed
       const Product = require('./models/Product');
+      const User = require('./models/User');
+      const bcrypt = require('bcryptjs');
+      
       const productCount = await Product.countDocuments();
       if (productCount === 0) {
         console.log('Database is empty. Add data through MongoDB Compass or the seed endpoint.');
+      }
+      
+      // Auto-seed users if none exist
+      const userCount = await User.countDocuments();
+      if (userCount === 0) {
+        console.log('📝 No users found. Auto-seeding test users...');
+        try {
+          const testUsers = [
+            {
+              name: 'Test User',
+              email: 'user@test.com',
+              password: 'password123',
+              role: 'user',
+              address: '123 Main St, City',
+              phone: '09123456789'
+            },
+            {
+              name: 'Admin User',
+              email: 'admin@test.com',
+              password: 'admin123',
+              role: 'admin',
+              address: '456 Admin St, Admin City',
+              phone: '09987654321'
+            }
+          ];
+          
+          for (let userData of testUsers) {
+            const user = new User(userData);
+            await user.save();
+            console.log(`✓ Created user: ${userData.email}`);
+          }
+          console.log('✅ Test users seeded successfully');
+        } catch (seedErr) {
+          console.error('⚠️ Error seeding users:', seedErr.message);
+        }
       }
     } catch (err) {
       console.error('✗ MongoDB connection failed:', err.message);
