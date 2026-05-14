@@ -1,4 +1,5 @@
-const mockDb = require('../mockDb');
+const Order = require('../models/Order');
+const Product = require('../models/Product');
 
 const createOrder = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ const createOrder = async (req, res) => {
 
     // Validate items and check stock
     for (let item of items) {
-      const product = mockDb.getProductById(item.product);
+      const product = await Product.findById(item.product);
       if (!product) {
         return res.status(404).json({ message: `Product ${item.product} not found` });
       }
@@ -25,8 +26,8 @@ const createOrder = async (req, res) => {
     }
 
     // Create order
-    const order = mockDb.createOrder({
-      userId: req.user.id,
+    let order = new Order({
+      user: req.user.id,
       items,
       totalAmount,
       paymentMethod,
@@ -35,13 +36,13 @@ const createOrder = async (req, res) => {
       phone,
       status: 'Pending'
     });
+    order = await order.save();
 
     // Reduce stock for each item
     for (let item of items) {
-      const product = mockDb.getProductById(item.product);
-      mockDb.updateProduct(item.product, { 
-        stock: product.stock - item.qty 
-      });
+      const product = await Product.findById(item.product);
+      product.stock -= item.qty;
+      await product.save();
     }
 
     res.status(201).json({ 
@@ -55,9 +56,7 @@ const createOrder = async (req, res) => {
 
 const getMyOrders = async (req, res) => {
   try {
-    const orders = mockDb.getUserOrders(req.user.id);
-    // Sort by createdAt descending
-    orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const orders = await Order.find({ user: req.user.id }).sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

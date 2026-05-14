@@ -1,10 +1,10 @@
-const mockDb = require('../mockDb');
+const Order = require('../models/Order');
+const Product = require('../models/Product');
+const User = require('../models/User');
 
 const getAllOrders = async (req, res) => {
   try {
-    const orders = mockDb.getAllOrders();
-    // Sort by createdAt descending
-    orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const orders = await Order.find().sort({ createdAt: -1 }).populate('user').populate('items.product');
     res.json(orders);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -19,7 +19,7 @@ const updateOrderStatus = async (req, res) => {
       return res.status(400).json({ message: 'Invalid status' });
     }
 
-    const order = mockDb.updateOrder(req.params.id, { status });
+    const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -39,8 +39,7 @@ const addProduct = async (req, res) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const product = {
-      id: Date.now().toString(),
+    let product = new Product({
       name,
       category,
       price,
@@ -48,9 +47,9 @@ const addProduct = async (req, res) => {
       image,
       description,
       sizesAvailable
-    };
+    });
 
-    mockDb.products.push(product);
+    product = await product.save();
     res.status(201).json({ message: 'Product added successfully', product });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -61,9 +60,9 @@ const updateProduct = async (req, res) => {
   try {
     const { name, category, price, stock, image, description, sizesAvailable } = req.body;
 
-    const product = mockDb.updateProduct(req.params.id, { 
+    const product = await Product.findByIdAndUpdate(req.params.id, { 
       name, category, price, stock, image, description, sizesAvailable 
-    });
+    }, { new: true });
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -77,13 +76,12 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-    const index = mockDb.products.findIndex(p => p.id === req.params.id);
+    const product = await Product.findByIdAndDelete(req.params.id);
     
-    if (index === -1) {
+    if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    mockDb.products.splice(index, 1);
     res.json({ message: 'Product deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -92,10 +90,7 @@ const deleteProduct = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = mockDb.users.map(u => {
-      const { password, ...userWithoutPassword } = u;
-      return userWithoutPassword;
-    });
+    const users = await User.find().select('-password');
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

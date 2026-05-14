@@ -1,0 +1,68 @@
+[
+  {
+    "name": "Trippy Mind T-Shirt",
+    "category": "T-Shirts",
+    "price": 499,
+    "stock": 50,
+    "image": "https://via.placeholder.com/300?text=Trippy+T-Shirt",
+    "description": "Classic trippy mind t-shirt with vibrant colors",
+    "sizesAvailable": ["S", "M", "L", "XL"],
+    "createdAt": "2024-01-15T10:00:00Z",
+    "updatedAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "name": "Drip Hoodie",
+    "category": "Hoodies",
+    "price": 1299,
+    "stock": 30,
+    "image": "https://via.placeholder.com/300?text=Drip+Hoodie",
+    "description": "Comfortable and stylish drip hoodie",
+    "sizesAvailable": ["M", "L", "XL"],
+    "createdAt": "2024-01-15T10:05:00Z",
+    "updatedAt": "2024-01-15T10:05:00Z"
+  },
+  {
+    "name": "Trippy Cap",
+    "category": "Accessories",
+    "price": 299,
+    "stock": 100,
+    "image": "https://via.placeholder.com/300?text=Trippy+Cap",
+    "description": "Classic trippy cap for everyday wear",
+    "sizesAvailable": ["S", "M", "L"],
+    "createdAt": "2024-01-15T10:10:00Z",
+    "updatedAt": "2024-01-15T10:10:00Z"
+  },
+  {
+    "name": "Mind Bender Tee",
+    "category": "T-Shirts",
+    "price": 549,
+    "stock": 40,
+    "image": "https://via.placeholder.com/300?text=Mind+Bender+Tee",
+    "description": "Express your mind with this unique tee",
+    "sizesAvailable": ["S", "M", "L", "XL"],
+    "createdAt": "2024-01-15T10:15:00Z",
+    "updatedAt": "2024-01-15T10:15:00Z"
+  },
+  {
+    "name": "Premium Drip Hoodie",
+    "category": "Hoodies",
+    "price": 1499,
+    "stock": 25,
+    "image": "https://via.placeholder.com/300?text=Premium+Hoodie",
+    "description": "Premium quality hoodie with special design",
+    "sizesAvailable": ["S", "M", "L", "XL"],
+    "createdAt": "2024-01-15T10:20:00Z",
+    "updatedAt": "2024-01-15T10:20:00Z"
+  },
+  {
+    "name": "Trippy Socks",
+    "category": "Accessories",
+    "price": 149,
+    "stock": 200,
+    "image": "https://via.placeholder.com/300?text=Trippy+Socks",
+    "description": "Colorful trippy socks for true fans",
+    "sizesAvailable": ["S", "M", "L"],
+    "createdAt": "2024-01-15T10:25:00Z",
+    "updatedAt": "2024-01-15T10:25:00Z"
+  }
+]
