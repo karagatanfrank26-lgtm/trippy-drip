@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const User = require('../models/User');
+const ShippingConfig = require('../models/ShippingConfig');
 
 const getAllOrders = async (req, res) => {
   try {
@@ -97,11 +98,64 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const getShippingConfig = async (req, res) => {
+  try {
+    let shipping = await ShippingConfig.findOne({ isDefault: true });
+    if (!shipping) {
+      // Create default shipping if doesn't exist
+      shipping = new ShippingConfig({
+        name: 'Standard Shipping',
+        cost: 100,
+        estimatedDays: 3,
+        description: 'Standard delivery shipping',
+        isDefault: true
+      });
+      await shipping.save();
+    }
+    res.json(shipping);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+const updateShippingConfig = async (req, res) => {
+  try {
+    const { cost, estimatedDays, name, description } = req.body;
+
+    if (cost === undefined || estimatedDays === undefined) {
+      return res.status(400).json({ message: 'Cost and estimatedDays are required' });
+    }
+
+    let shipping = await ShippingConfig.findOne({ isDefault: true });
+    if (!shipping) {
+      shipping = new ShippingConfig({
+        name: name || 'Standard Shipping',
+        cost,
+        estimatedDays,
+        description: description || 'Standard delivery shipping',
+        isDefault: true
+      });
+    } else {
+      shipping.name = name || shipping.name;
+      shipping.cost = cost;
+      shipping.estimatedDays = estimatedDays;
+      if (description) shipping.description = description;
+    }
+
+    await shipping.save();
+    res.json({ message: 'Shipping config updated', shipping });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
 module.exports = {
   getAllOrders,
   updateOrderStatus,
   addProduct,
   updateProduct,
   deleteProduct,
-  getAllUsers
+  getAllUsers,
+  getShippingConfig,
+  updateShippingConfig
 };

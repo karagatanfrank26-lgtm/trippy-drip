@@ -8,7 +8,9 @@ const {
   addProduct,
   updateProduct,
   deleteProduct,
-  getAllUsers
+  getAllUsers,
+  getShippingConfig,
+  updateShippingConfig
 } = require('../controllers/adminController');
 
 // Orders management
@@ -22,5 +24,9 @@ router.delete('/products/:id', authMiddleware, adminMiddleware, deleteProduct);
 
 // Users management
 router.get('/users', authMiddleware, adminMiddleware, getAllUsers);
+
+// Shipping management
+router.get('/shipping', authMiddleware, adminMiddleware, getShippingConfig);
+router.put('/shipping', authMiddleware, adminMiddleware, updateShippingConfig);
 
 module.exports = router;
