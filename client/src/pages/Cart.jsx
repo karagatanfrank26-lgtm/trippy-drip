@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CartItem from '../components/CartItem';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import createAxiosInstance from '../api/axiosInstance';
 
 export default function Cart() {
   const { cart, clearCart, getTotalPrice } = useCart();
   const { token } = useAuth();
+  const [shippingCost, setShippingCost] = useState(0);
+
+  useEffect(() => {
+    const fetchShippingCost = async () => {
+      try {
+        const api = createAxiosInstance(token);
+        const response = await api.get('/admin/shipping');
+        setShippingCost(response.data.cost || 0);
+      } catch (err) {
+        console.error('Failed to fetch shipping cost:', err);
+        setShippingCost(0);
+      }
+    };
+    fetchShippingCost();
+  }, [token]);
 
   if (cart.length === 0) {
     return (
@@ -52,12 +68,12 @@ export default function Cart() {
             </div>
             <div className="flex justify-between items-center text-gray-300">
               <span>Shipping</span>
-              <span>₱150</span>
+              <span>₱{shippingCost.toLocaleString()}</span>
             </div>
             <div className="border-t border-gray-600 pt-4 flex justify-between items-center">
               <span className="text-cyan-400 font-bold text-lg">Total</span>
               <span className="text-3xl font-black text-pink-500">
-                ₱{(getTotalPrice() + 150).toLocaleString()}
+                ₱{(getTotalPrice() + shippingCost).toLocaleString()}
               </span>
             </div>
           </div>
