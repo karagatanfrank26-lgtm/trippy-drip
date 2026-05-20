@@ -3,7 +3,7 @@ import ProductCard from '../components/ProductCard';
 import createAxiosInstance from '../api/axiosInstance';
 import { useAuth } from '../context/AuthContext';
 
-const CATEGORIES = ['All', 'T-Shirts', 'Hoodies', 'Accessories'];
+const CATEGORIES = ['All', 'T-Shirts', 'Hoodies', 'Accessories', 'Shorts'];
 
 export default function Shop() {
   const [products, setProducts] = useState([]);
