@@ -319,6 +319,7 @@ export default function AdminPanel() {
                     <option value="T-Shirts">T-Shirts</option>
                     <option value="Hoodies">Hoodies</option>
                     <option value="Accessories">Accessories</option>
+                    <option value="Shorts">Shorts</option>
                   </select>
                   <input
                     type="number"

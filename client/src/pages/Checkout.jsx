@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -10,6 +10,7 @@ export default function Checkout() {
   const { token } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [shippingCost, setShippingCost] = useState(0);
 
   const [formData, setFormData] = useState({
     address: '',
@@ -20,6 +21,20 @@ export default function Checkout() {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchShippingCost = async () => {
+      try {
+        const api = createAxiosInstance(token);
+        const response = await api.get('/admin/shipping');
+        setShippingCost(response.data.cost || 0);
+      } catch (err) {
+        console.error('Failed to fetch shipping cost:', err);
+        setShippingCost(0);
+      }
+    };
+    fetchShippingCost();
+  }, [token]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -74,7 +89,7 @@ export default function Checkout() {
           selectedSize: item.selectedSize,
           price: item.product.price
         })),
-        totalAmount: getTotalPrice() + 150,
+        totalAmount: getTotalPrice() + shippingCost,
         paymentMethod: formData.paymentMethod,
         ...(formData.paymentMethod === 'GCash' && {
           gcashReferenceNumber: formData.gcashReferenceNumber,
@@ -236,11 +251,11 @@ export default function Checkout() {
               </div>
               <div className="flex justify-between">
                 <span>Shipping:</span>
-                <span>₱150</span>
+                <span>₱{shippingCost.toLocaleString()}</span>
               </div>
               <div className="border-t border-gray-600 pt-4 flex justify-between text-lg font-bold">
                 <span className="text-cyan-400">Total:</span>
-                <span className="text-pink-500">₱{(getTotalPrice() + 150).toLocaleString()}</span>
+                <span className="text-pink-500">₱{(getTotalPrice() + shippingCost).toLocaleString()}</span>
               </div>
             </div>
           </div>
